@@ -1803,99 +1803,54 @@ static int test_crl_indirect_mfail(void)
     return test;
 }
 
-static int test_crl_indirect_revoked(void)
+static int verify_indirect_crl(const char **leaf_pem,
+    const char **crl_issuer_pem, const char **root2_pem, const char **crl_pem,
+    int expect)
 {
-    X509 *root = NULL;
-    X509 *icrl_issuer = NULL;
-    X509 *leaf = NULL;
-    X509_CRL *crl = NULL;
-    STACK_OF(X509) *untrusted = NULL;
-    STACK_OF(X509_CRL) *crls;
     unsigned long flags = X509_V_FLAG_CRL_CHECK
         | X509_V_FLAG_EXTENDED_CRL_SUPPORT;
+    X509 *leaf = NULL, *root = NULL, *root2 = NULL, *crl_issuer = NULL;
+    X509_CRL *crl = NULL;
+    STACK_OF(X509) *untrusted = NULL;
     int test;
 
-    test = TEST_ptr(root = X509_from_strings(kRoot))
-        && TEST_ptr(icrl_issuer = X509_from_strings(kIndirectCRLIssuer))
-        && TEST_ptr(leaf = X509_from_strings(kIndirectLeaf))
-        && TEST_ptr(crl = CRL_from_strings(kCrlIndirectRevoked))
+    test = TEST_ptr(leaf = X509_from_strings(leaf_pem))
+        && TEST_ptr(root = X509_from_strings(kRoot))
+        && TEST_ptr(crl_issuer = X509_from_strings(crl_issuer_pem))
+        && TEST_ptr(crl = CRL_from_strings(crl_pem))
+        && (root2_pem == NULL
+            || TEST_ptr(root2 = X509_from_strings(root2_pem)))
         && TEST_ptr(untrusted = sk_X509_new_null())
-        && TEST_true(sk_X509_push(untrusted, icrl_issuer))
-        && TEST_ptr(crls = make_CRL_stack(crl, NULL))
-        && TEST_int_eq(verify_ex(leaf, root, NULL, untrusted, crls, flags, kVerify, 1),
-            X509_V_ERR_CERT_REVOKED);
+        && TEST_true(sk_X509_push(untrusted, crl_issuer))
+        && TEST_int_eq(verify_ex(leaf, root, root2, untrusted,
+                           make_CRL_stack(crl, NULL), flags, kVerify, 1),
+            expect);
 
     sk_X509_free(untrusted);
     X509_CRL_free(crl);
-    X509_free(icrl_issuer);
-    X509_free(leaf);
+    X509_free(crl_issuer);
+    X509_free(root2);
     X509_free(root);
+    X509_free(leaf);
     return test;
+}
+
+static int test_crl_indirect_revoked(void)
+{
+    return verify_indirect_crl(kIndirectLeaf, kIndirectCRLIssuer, NULL,
+        kCrlIndirectRevoked, X509_V_ERR_CERT_REVOKED);
 }
 
 static int test_crl_indirect_wrong_ta(void)
 {
-    X509 *root = NULL;
-    X509 *root2 = NULL;
-    X509 *icrl_issuer = NULL;
-    X509 *leaf = NULL;
-    X509_CRL *crl = NULL;
-    STACK_OF(X509) *untrusted = NULL;
-    STACK_OF(X509_CRL) *crls;
-    unsigned long flags = X509_V_FLAG_CRL_CHECK
-        | X509_V_FLAG_EXTENDED_CRL_SUPPORT;
-    int test;
-
-    test = TEST_ptr(root = X509_from_strings(kRoot))
-        && TEST_ptr(root2 = X509_from_strings(kRoot2))
-        && TEST_ptr(icrl_issuer = X509_from_strings(kIndirectCRLIssuerAlt))
-        && TEST_ptr(leaf = X509_from_strings(kIndirectLeaf))
-        && TEST_ptr(crl = CRL_from_strings(kCrlIndirectAlt))
-        && TEST_ptr(untrusted = sk_X509_new_null())
-        && TEST_true(sk_X509_push(untrusted, icrl_issuer))
-        && TEST_ptr(crls = make_CRL_stack(crl, NULL))
-        && TEST_int_eq(verify_ex(leaf, root, root2, untrusted, crls, flags,
-                           kVerify, 1),
-            X509_V_ERR_CRL_PATH_VALIDATION_ERROR);
-
-    sk_X509_free(untrusted);
-    X509_CRL_free(crl);
-    X509_free(icrl_issuer);
-    X509_free(leaf);
-    X509_free(root2);
-    X509_free(root);
-    return test;
+    return verify_indirect_crl(kIndirectLeaf, kIndirectCRLIssuerAlt, kRoot2,
+        kCrlIndirectAlt, X509_V_ERR_CRL_PATH_VALIDATION_ERROR);
 }
 
 static int test_crl_indirect_no_chain(void)
 {
-    X509 *root = NULL;
-    X509 *icrl_issuer = NULL;
-    X509 *leaf = NULL;
-    X509_CRL *crl = NULL;
-    STACK_OF(X509) *untrusted = NULL;
-    STACK_OF(X509_CRL) *crls;
-    unsigned long flags = X509_V_FLAG_CRL_CHECK
-        | X509_V_FLAG_EXTENDED_CRL_SUPPORT;
-    int test;
-
-    test = TEST_ptr(root = X509_from_strings(kRoot))
-        && TEST_ptr(icrl_issuer = X509_from_strings(kIndirectCRLIssuerNoChain))
-        && TEST_ptr(leaf = X509_from_strings(kIndirectLeaf))
-        && TEST_ptr(crl = CRL_from_strings(kCrlIndirectNoChain))
-        && TEST_ptr(untrusted = sk_X509_new_null())
-        && TEST_true(sk_X509_push(untrusted, icrl_issuer))
-        && TEST_ptr(crls = make_CRL_stack(crl, NULL))
-        && TEST_int_eq(verify_ex(leaf, root, NULL, untrusted, crls, flags,
-                           kVerify, 1),
-            X509_V_ERR_CRL_PATH_VALIDATION_ERROR);
-
-    sk_X509_free(untrusted);
-    X509_CRL_free(crl);
-    X509_free(icrl_issuer);
-    X509_free(leaf);
-    X509_free(root);
-    return test;
+    return verify_indirect_crl(kIndirectLeaf, kIndirectCRLIssuerNoChain, NULL,
+        kCrlIndirectNoChain, X509_V_ERR_CRL_PATH_VALIDATION_ERROR);
 }
 
 static int test_crl_diff_mfail(void)
