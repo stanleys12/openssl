@@ -1031,6 +1031,116 @@ static const char *kCrlIndirectNoChain[] = {
 };
 
 /*
+ * kIndirectCRLIssuer2 is issued by kRoot and signs the two CRLs below, both
+ * with the indirectCRL flag set.  The single distribution point of
+ * kIndirectLeafCRLIssuerOnly has no field other than a cRLIssuer naming
+ * kIndirectCRLIssuer2.  The IDP of kCrlIndirectOtherDP names an unrelated
+ * distribution point, while the IDP of kCrlIndirectCRLIssuerDP names that
+ * cRLIssuer.
+ */
+static const char *kIndirectCRLIssuer2[] = {
+    "-----BEGIN CERTIFICATE-----\n",
+    "MIIEGjCCAwKgAwIBAgIQatiM5maOBdX42dxM6NbOUjANBgkqhkiG9w0BAQsFADCB\n",
+    "kDELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNh\n",
+    "biBGcmFuY2lzY28xFTATBgNVBAoMDEV4YW1wbGUgQ29ycDEeMBwGA1UECwwVQ2Vy\n",
+    "dGlmaWNhdGUgQXV0aG9yaXR5MR0wGwYDVQQDDBRFeGFtcGxlIENvcnAgUm9vdCBD\n",
+    "QTAeFw0yNjAzMTAxMjAwMDBaFw0zNjAzMDcxMjAwMDBaMIGeMQswCQYDVQQGEwJV\n",
+    "UzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzEV\n",
+    "MBMGA1UECgwMRXhhbXBsZSBDb3JwMR4wHAYDVQQLDBVDZXJ0aWZpY2F0ZSBBdXRo\n",
+    "b3JpdHkxKzApBgNVBAMMIkV4YW1wbGUgQ29ycCBJbmRpcmVjdCBDUkwgSXNzdWVy\n",
+    "IDIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDWiIux0ZxNW5mAJAgU\n",
+    "I6G4ATKsMGGkbY23wKbxDp2sWSIJ+DTHGkvIi7h0LXvw4RBBtQGHlZg6T4HzwM6p\n",
+    "EFIeMJ6xbfeW7Lrx6z4Yz462iu9fs71UbZgr7yG+tSPHXqTwWmc6XJVOXobW6vep\n",
+    "BZuLJ/YZsbTlVcdd0LORVmUTrXHx4RqlGt7jktu9bqmCyZznp5BIz8e8iFKZfh43\n",
+    "jSr537KZ++mU4HsCeCqh+sRw6KeooVSBmSRGnA6IvhTKrBaEwNwzDOEe5b6bdlRt\n",
+    "pDoGZEAQ1JNh/O2pzxE8o9rnknnwK55SjaSM/rs/KJgrCiDxEyl0zDWGwlqKqBCn\n",
+    "RWBjAgMBAAGjYDBeMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgECMB0GA1Ud\n",
+    "DgQWBBS1UbuQEM5teya2Eq7vgiibIKzHZzAfBgNVHSMEGDAWgBT+FA4TGwlny0oN\n",
+    "S9pP8++QtUPbMzANBgkqhkiG9w0BAQsFAAOCAQEAWpqVQk9AXqSp8GI83iiw2Hvm\n",
+    "POFGPXOHLt5gJzHW3tJ62fJlAt4KcrUuVty3+O6HuhC89WtygNkYIqzh0s+Pw6o9\n",
+    "Me21zOV6VnacXRlcOqb0pLmPGG2Un4dpd6nvT9ESogzcXRNYUS+cBwxIC9vot57E\n",
+    "h+NPEezUk2qjMCJce+UcntkuH3lBCXRv+iboW1H+Gigtm+sP223MQ89A9t6SSnpq\n",
+    "mrnJJkhh3WBp6D1VekG0P8FsWu2uMx/DprUVXFZ+5Wtgt4lbmm+1T0gR2Yg4HCmS\n",
+    "5eohZBRzHPQExF6cuwnr5CtvIezDaRvU/OCJjHcJECtyynGvSyuWgneymxBu6A==\n",
+    "-----END CERTIFICATE-----\n",
+    NULL
+};
+
+static const char *kIndirectLeafCRLIssuerOnly[] = {
+    "-----BEGIN CERTIFICATE-----\n",
+    "MIIE5zCCA8+gAwIBAgIPeExxeyw7zgaP76tPCEqgMA0GCSqGSIb3DQEBCwUAMIGQ\n",
+    "MQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2Fu\n",
+    "IEZyYW5jaXNjbzEVMBMGA1UECgwMRXhhbXBsZSBDb3JwMR4wHAYDVQQLDBVDZXJ0\n",
+    "aWZpY2F0ZSBBdXRob3JpdHkxHTAbBgNVBAMMFEV4YW1wbGUgQ29ycCBSb290IENB\n",
+    "MB4XDTI2MDMxMDEyMDAwMFoXDTI3MDMxMDEyMDAwMFowcDELMAkGA1UEBhMCVVMx\n",
+    "EzARBgNVBAgMCkNhbGlmb3JuaWExFTATBgNVBAoMDEV4YW1wbGUgQ29ycDEVMBMG\n",
+    "A1UECwwMV2ViIFNlcnZpY2VzMR4wHAYDVQQDDBVpbmRpcmVjdDIuZXhhbXBsZS5j\n",
+    "b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDwuKxcqsIxz9vq+05u\n",
+    "rvDMFjAlfLhaDLzTzcmjuM2Rx+IeQ82qcpd686FhCz55pgWxKyU8UxZy7O645Js8\n",
+    "RF65qnfL0w09/2d0W3XkNLEFWZyhsFHUaZAfZS0XJGHn77t8BNvY2K2CIjnLKale\n",
+    "wrlmm4f/QEJ3KeVgl5PFuV1Pq2aGsHFJuFPNaW99wZidnSGpgEctfbpzoX2ma4Se\n",
+    "RryI2byLzaQ0Kl8ZPm9t1dS4X8dBXhTuP5jPmLCx22T29QSAAeatmb1GRrcQUdRC\n",
+    "8AxUfxOVPEVEd5rKpiMcwxEdD3F042o0iOpkAmUp77akfZh2JpUG19bAi6yHfuPG\n",
+    "jTa5AgMBAAGjggFbMIIBVzAMBgNVHRMBAf8EAjAAMA4GA1UdDwEB/wQEAwIFoDAd\n",
+    "BgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwHQYDVR0OBBYEFOdEIr/YGAq/\n",
+    "lIy/6m3JdUfeVWKgMB8GA1UdIwQYMBaAFP4UDhMbCWfLSg1L2k/z75C1Q9szMCAG\n",
+    "A1UdEQQZMBeCFWluZGlyZWN0Mi5leGFtcGxlLmNvbTCBtQYDVR0fBIGtMIGqMIGn\n",
+    "ooGkpIGhMIGeMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQG\n",
+    "A1UEBwwNU2FuIEZyYW5jaXNjbzEVMBMGA1UECgwMRXhhbXBsZSBDb3JwMR4wHAYD\n",
+    "VQQLDBVDZXJ0aWZpY2F0ZSBBdXRob3JpdHkxKzApBgNVBAMMIkV4YW1wbGUgQ29y\n",
+    "cCBJbmRpcmVjdCBDUkwgSXNzdWVyIDIwDQYJKoZIhvcNAQELBQADggEBABhQwHZo\n",
+    "iNlyCC9LB3CZtCg/+79BJlp5HEb9WpSjNJuwWZpoyTDH4hKdJ/dgYYUMvPHFnVRC\n",
+    "TCgp6IzaLtEDsk6r5v39I1gme4lNf8Urg6MlgVOfUrpMYUWqSD9wOpCZACt+yuDi\n",
+    "nm/HITjE5as7ctzdCzB7+qb3ZLq7TEfTxAOkbvh0mPvHQZDpv1MCeaIJ3asUWlEy\n",
+    "2gJCBUsQ48TxALgwZmGYY3fnKpGeWxxbrLOg8FSDLYNcBk/MsKC4yI/XT/3z4Lgc\n",
+    "ZOmdKpEmaLqaHadtZ5jSxdQfIL+B8wUZzRfKPHx6iyIRiYRGmOJF3AuvAg74Cauu\n",
+    "Dsc840jMeaZVAP0=\n",
+    "-----END CERTIFICATE-----\n",
+    NULL
+};
+
+static const char *kCrlIndirectOtherDP[] = {
+    "-----BEGIN X509 CRL-----\n",
+    "MIICUjCCAToCAQEwDQYJKoZIhvcNAQELBQAwgZ4xCzAJBgNVBAYTAlVTMRMwEQYD\n",
+    "VQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRUwEwYDVQQK\n",
+    "DAxFeGFtcGxlIENvcnAxHjAcBgNVBAsMFUNlcnRpZmljYXRlIEF1dGhvcml0eTEr\n",
+    "MCkGA1UEAwwiRXhhbXBsZSBDb3JwIEluZGlyZWN0IENSTCBJc3N1ZXIgMhcNMjYw\n",
+    "MzEwMDgwMDAwWhcNMjYwNjA4MDgwMDAwWqBnMGUwHwYDVR0jBBgwFoAUtVG7kBDO\n",
+    "bXsmthKu74IomyCsx2cwNQYDVR0cAQH/BCswKaAkoCKGIGh0dHA6Ly9jcmwuZXhh\n",
+    "bXBsZS5jb20vb3RoZXIuY3JshAH/MAsGA1UdFAQEAgIQADANBgkqhkiG9w0BAQsF\n",
+    "AAOCAQEAqiRDgZOvWDxZ2iOihbOMJNmbVSrzzZwLHv4z3sw7VjUgrYtg9rlWEVmL\n",
+    "e+w9ckEbeSJ7z6ws9tSRu7sboMfy3/YX6HOFDDU+rHr9ea58XrOG2pf1pgEs6AS3\n",
+    "P0GZQDgwBLuoRZTg5+XQShxYrbIe3z5iem7vHPw0dNfbvmAAp4JnT1dUdtcOQWkq\n",
+    "GQHKxvCOFHUBv6ai/52x5QJ4VPlUmB8MCpOKv9rNi7VFBK2mMSSOgKBWkiRx92Wf\n",
+    "K0BTpSh5ciyrSJTcghhxZpwnthIaGxE79D+M00PbKcxN+8AgDXxQC0oZVxjCzu9J\n",
+    "L0e2Khj047463uOBYRKj9ZFZrWwt6Q==\n",
+    "-----END X509 CRL-----\n",
+    NULL
+};
+
+static const char *kCrlIndirectCRLIssuerDP[] = {
+    "-----BEGIN X509 CRL-----\n",
+    "MIIC2zCCAcMCAQEwDQYJKoZIhvcNAQELBQAwgZ4xCzAJBgNVBAYTAlVTMRMwEQYD\n",
+    "VQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMRUwEwYDVQQK\n",
+    "DAxFeGFtcGxlIENvcnAxHjAcBgNVBAsMFUNlcnRpZmljYXRlIEF1dGhvcml0eTEr\n",
+    "MCkGA1UEAwwiRXhhbXBsZSBDb3JwIEluZGlyZWN0IENSTCBJc3N1ZXIgMhcNMjYw\n",
+    "MzEwMDgwMDAwWhcNMjYwNjA4MDgwMDAwWqCB7zCB7DAfBgNVHSMEGDAWgBS1UbuQ\n",
+    "EM5teya2Eq7vgiibIKzHZzCBuwYDVR0cAQH/BIGwMIGtoIGnoIGkpIGhMIGeMQsw\n",
+    "CQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZy\n",
+    "YW5jaXNjbzEVMBMGA1UECgwMRXhhbXBsZSBDb3JwMR4wHAYDVQQLDBVDZXJ0aWZp\n",
+    "Y2F0ZSBBdXRob3JpdHkxKzApBgNVBAMMIkV4YW1wbGUgQ29ycCBJbmRpcmVjdCBD\n",
+    "UkwgSXNzdWVyIDKEAf8wCwYDVR0UBAQCAhAAMA0GCSqGSIb3DQEBCwUAA4IBAQBk\n",
+    "4RHeGg6+4ZeQJZw2CazWMgSrHLHlGkBCk40bFhk4X1piOu0BSGyu2s2CZJgBhwly\n",
+    "8yHZ+VIGM+4QMlUVxRtCo3z646JbeRd5rMUlJpKgzzx2kQGt79tm9kCwlbRAP777\n",
+    "TdMk2ZYpZsByNDyhGI9vB8bcNCErNqe1wvCkyd7Sej16JR1s2KTK9IEQT0+BBwTV\n",
+    "PjpX0Lv/QHaHzOvQLg6cC99zMJifcaQ68xc2/n6AO348HH23S6eKpZy/wBxlnufp\n",
+    "gqjW8LDtRZaoEXPRwpqwTELD6Dgs23bHqJ3VhGa4FxJTrbk3qQYdWkvVmFuvCUos\n",
+    "SnBYv1gvmK0EUW1dn1dg\n",
+    "-----END X509 CRL-----\n",
+    NULL
+};
+
+/*
  * A well-formed CRL issued by kRoot (sha256WithRSAEncryption, inner and
  * outer signatureAlgorithm identical), used as the positive test case in
  * test_crl_sigalg_mismatch.
@@ -1853,6 +1963,23 @@ static int test_crl_indirect_no_chain(void)
         kCrlIndirectNoChain, X509_V_ERR_CRL_PATH_VALIDATION_ERROR);
 }
 
+/*
+ * The only distribution point of kIndirectLeafCRLIssuerOnly has no
+ * distributionPoint field, so the distribution point name in the IDP of a CRL
+ * must be matched against the names in its cRLIssuer field.
+ */
+static int test_crl_indirect_idp_wrong_dp(void)
+{
+    return verify_indirect_crl(kIndirectLeafCRLIssuerOnly, kIndirectCRLIssuer2,
+        NULL, kCrlIndirectOtherDP, X509_V_ERR_DIFFERENT_CRL_SCOPE);
+}
+
+static int test_crl_indirect_idp_crlissuer_dp(void)
+{
+    return verify_indirect_crl(kIndirectLeafCRLIssuerOnly, kIndirectCRLIssuer2,
+        NULL, kCrlIndirectCRLIssuerDP, X509_V_OK);
+}
+
 static int test_crl_diff_mfail(void)
 {
     X509_CRL *base_crl = NULL, *newer_crl = NULL, *delta = NULL;
@@ -1986,6 +2113,8 @@ int setup_tests(void)
     ADD_TEST(test_crl_indirect_revoked);
     ADD_TEST(test_crl_indirect_wrong_ta);
     ADD_TEST(test_crl_indirect_no_chain);
+    ADD_TEST(test_crl_indirect_idp_wrong_dp);
+    ADD_TEST(test_crl_indirect_idp_crlissuer_dp);
     ADD_ALL_TESTS(test_reuse_crl, 6);
     ADD_MFAIL_TEST(test_crl_diff_mfail);
     ADD_TEST(test_crl_sigalg_mismatch);

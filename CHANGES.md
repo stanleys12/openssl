@@ -33,6 +33,16 @@ OpenSSL 4.2
 
 ### Changes between 4.1 and 4.2 [xx XXX xxxx]
 
+ * Fixed CRL scope checking for certificates having a CRL distribution point
+   that contains only a `cRLIssuer` field.  The distribution point name in
+   the issuing distribution point extension of a CRL is now matched against
+   the names in that `cRLIssuer`, as required by step (b)(2)(i)
+   of [RFC 5280 Section 6.3.3].  Previously no comparison was made, so such
+   a CRL was accepted as covering the certificate even when it restricted
+   itself to an unrelated distribution point.
+
+   *Stanley Shen*
+
  * Changed the OpenSSL FIPS provider so that every algorithm advertised with
    `fips=yes` explicitly exposes the `fips-indicator` as a gettable context
    parameter and returns 1 for an approved operation.  The absence of an

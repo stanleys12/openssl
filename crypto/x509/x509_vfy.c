@@ -1985,6 +1985,26 @@ end:
     return ret;
 }
 
+/*
+ * Check the distribution point name |idpname| of a CRL's IDP extension against
+ * the distribution point |dp| of a certificate, as required by RFC 5280,
+ * section 6.3.3: the names in the IDP must match the names in the
+ * distributionPoint field of |dp| or, if that field is omitted, the names in
+ * its cRLIssuer field.
+ */
+static int idp_check_crldp(DIST_POINT *dp, DIST_POINT_NAME *idpname)
+{
+    DIST_POINT_NAME dpname;
+
+    if (dp->distpoint != NULL || dp->CRLissuer == NULL)
+        return idp_check_dp(dp->distpoint, idpname);
+
+    dpname.type = 0; /* fullName */
+    dpname.name.fullname = dp->CRLissuer;
+    dpname.dpname = NULL;
+    return idp_check_dp(&dpname, idpname);
+}
+
 /* Check CRLDP and IDP */
 static int crl_crldp_check(X509 *x, X509_CRL *crl, int crl_score,
     unsigned int *preasons)
@@ -2006,7 +2026,7 @@ static int crl_crldp_check(X509 *x, X509_CRL *crl, int crl_score,
 
         if (crldp_check_crlissuer(dp, crl, crl_score)) {
             if (crl->idp == NULL
-                || idp_check_dp(dp->distpoint, crl->idp->distpoint)) {
+                || idp_check_crldp(dp, crl->idp->distpoint)) {
                 *preasons &= dp->dp_reasons;
                 return 1;
             }
