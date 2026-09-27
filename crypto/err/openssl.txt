@@ -1089,6 +1089,7 @@ PROV_R_INVALID_KEY_LENGTH:105:invalid key length
 PROV_R_INVALID_LABEL:257:invalid label
 PROV_R_INVALID_MAC:151:invalid mac
 PROV_R_INVALID_MEMORY_SIZE:235:invalid memory size
+PROV_R_INVALID_MESSAGE_ENCODING:268:invalid message encoding
 PROV_R_INVALID_MGF1_MD:167:invalid mgf1 md
 PROV_R_INVALID_MODE:125:invalid mode
 PROV_R_INVALID_NONCE_LENGTH:264:invalid nonce length

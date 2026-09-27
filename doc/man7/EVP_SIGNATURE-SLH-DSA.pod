@@ -66,6 +66,7 @@ They can be set by passing an OSSL_PARAM array to L<EVP_PKEY_sign_init_ex2(3)>.
 The default value of 1 uses 'Pure SLH-DSA Signature Generation' as described
 above. Setting it to 0 does not encode the message, which is used for testing,
 but can also be used for 'Pre Hash SLH-DSA Signature Generation'.
+Other values are rejected.
 
 =item "test-entropy" (B<OSSL_SIGNATURE_PARAM_TEST_ENTROPY <octet string>
 

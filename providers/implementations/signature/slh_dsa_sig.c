@@ -310,8 +310,18 @@ static int slh_dsa_set_ctx_params(void *vctx, const OSSL_PARAM params[])
     if (p.det != NULL && !OSSL_PARAM_get_int(p.det, &pctx->deterministic))
         return 0;
 
-    if (p.msgenc != NULL && !OSSL_PARAM_get_int(p.msgenc, &pctx->msg_encode))
-        return 0;
+    if (p.msgenc != NULL) {
+        int msg_encode;
+
+        if (!OSSL_PARAM_get_int(p.msgenc, &msg_encode))
+            return 0;
+        if (msg_encode != SLH_DSA_MESSAGE_ENCODE_RAW
+            && msg_encode != SLH_DSA_MESSAGE_ENCODE_PURE) {
+            ERR_raise(ERR_LIB_PROV, PROV_R_INVALID_MESSAGE_ENCODING);
+            return 0;
+        }
+        pctx->msg_encode = msg_encode;
+    }
     return 1;
 }
 

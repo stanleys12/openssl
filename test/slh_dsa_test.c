@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2024-2026 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -630,6 +630,45 @@ err:
     return ret;
 }
 
+static int slh_dsa_msg_encoding_invalid_test(void)
+{
+    static const int bad_encodings[] = { -1, 2, 256 };
+    int ret = 0;
+    size_t i;
+    EVP_PKEY *key = NULL;
+    EVP_MD_CTX *mctx = NULL;
+    OSSL_PARAM params[2];
+    const char *alg = "SLH-DSA-SHA2-128s";
+    int encode;
+
+    if (!TEST_ptr(key = do_gen_key(alg, NULL, 0))
+        || !TEST_ptr(mctx = EVP_MD_CTX_new()))
+        goto err;
+
+    params[0] = OSSL_PARAM_construct_int(OSSL_SIGNATURE_PARAM_MESSAGE_ENCODING,
+        &encode);
+    params[1] = OSSL_PARAM_construct_end();
+
+    for (i = 0; i < OSSL_NELEM(bad_encodings); ++i) {
+        encode = bad_encodings[i];
+        if (!TEST_int_eq(EVP_DigestSignInit_ex(mctx, NULL, NULL, lib_ctx, NULL,
+                             key, params),
+                0))
+            goto err;
+    }
+    for (encode = 0; encode <= 1; ++encode) {
+        if (!TEST_int_eq(EVP_DigestSignInit_ex(mctx, NULL, NULL, lib_ctx, NULL,
+                             key, params),
+                1))
+            goto err;
+    }
+    ret = 1;
+err:
+    EVP_PKEY_free(key);
+    EVP_MD_CTX_free(mctx);
+    return ret;
+}
+
 const OPTIONS *test_get_options(void)
 {
     static const OPTIONS options[] = {
@@ -671,6 +710,7 @@ int setup_tests(void)
     ADD_ALL_TESTS(slh_dsa_keygen_test, OSSL_NELEM(slh_dsa_keygen_testdata));
     ADD_TEST(slh_dsa_digest_sign_verify_test);
     ADD_TEST(slh_dsa_keygen_invalid_test);
+    ADD_TEST(slh_dsa_msg_encoding_invalid_test);
     return 1;
 }
 

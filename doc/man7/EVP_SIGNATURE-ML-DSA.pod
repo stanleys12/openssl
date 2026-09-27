@@ -58,6 +58,7 @@ above. Setting it to 0 does not encode the message, which is used for testing.
 The message encoding steps are defined in
 L<FIPS 204|https://csrc.nist.gov/pubs/fips/204/final> Algorithm 2 step 10 and
 Algorithm 3 step 5.
+Other values are rejected.
 
 =item "test-entropy" (B<OSSL_SIGNATURE_PARAM_TEST_ENTROPY>) <octet string>
 

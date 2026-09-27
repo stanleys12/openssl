@@ -514,6 +514,10 @@ static struct sig_params_st {
     { msg2, sizeof(msg2), ctx1, sizeof(ctx1), 1, 1 },
     { msg2, sizeof(msg2), ctx2, sizeof(ctx2), 0, 0 },
     { msg2, sizeof(msg2), ctx2, sizeof(ctx2), 1, 0 },
+    /* "message-encoding" only accepts 0 or 1 */
+    { msg1, sizeof(msg1), NULL, 0, -1, 0 },
+    { msg1, sizeof(msg1), NULL, 0, 2, 0 },
+    { msg1, sizeof(msg1), NULL, 0, 256, 0 },
 };
 
 static int do_ml_dsa_sign_verify(const char *alg, int tstid)
